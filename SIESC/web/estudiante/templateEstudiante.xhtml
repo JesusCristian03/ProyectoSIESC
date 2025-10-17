@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <f:event type="preRenderView" listener="#{controlSesion.verificarEstudiante}"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="/css/default.css"/>
+        <h:outputStylesheet name="/css/cssLayout.css"/>
+        <link rel="icon" href="/resources/assets/itc.png" type="image/x-icon"/>
+        <title>Sistema Escolar ITC</title>
+    </h:head>
+
+    <h:body>
+
+
+        <div id="top" class="top">
+            <ui:insert name="top">
+                <img src="../resources/assets/TECNM-blanco.png" width="100" height="45" alt="TECNM"/>
+            </ui:insert>
+        </div>
+        <div>
+            <div id="left">
+                <ui:insert name="left">
+                    <h:form>
+                        <p:menu toggleable="true" style="font-size:15px;">
+                            <p:submenu label="Información Escolar" expanded="false">
+                                <p:menuitem value="Asistencia" action="index" icon="pi pi-refresh"/>
+                                <p:menuitem value="Justificación" actionListener="#{horarioBean.buscarFaltas}" action="justificaDocente" icon="pi pi-times"/>
+                                <p:menuitem value="Horarios" action="horarios" icon="pi pi-refresh"/>
+                                <p:menuitem value="Cerrar sesión" action="#{controlSesion.cerrarSesion}" ajax="false" icon="pi pi-list"/>
+                            </p:submenu>
+                            <p:submenu label="Iscripciones" expanded="false">
+                                <p:menuitem value="Ene-Jun/Ago-Dic" action="inscripciones" actionListener="#{inscripcionesBean.iniciarInscripcion}" icon="pi pi-refresh"/>
+                                <p:menuitem value="Grupos Disponibles" actionListener="#{horarioBean.buscarFaltas}" action="justificaDocente" icon="pi pi-times"/>
+                                <p:menuitem value="Horario Inscripcion" action="horarios" icon="pi pi-refresh"/>
+                                <p:menuitem value="Cerrar sesión" action="#{controlSesion.cerrarSesion}" ajax="false" icon="pi pi-list"/>
+                            </p:submenu>
+                            <p:submenu label="Eval. Docente" expanded="false">
+                                <p:menuitem value="Asistencia" action="asistenciaDocente" icon="pi pi-refresh"/>
+                                <p:menuitem value="Justificación" actionListener="#{horarioBean.buscarFaltas}" action="justificaDocente" icon="pi pi-times"/>
+                                <p:menuitem value="Horarios" action="horarios" icon="pi pi-refresh"/>
+                                <p:menuitem value="Cerrar sesión" action="#{controlSesion.cerrarSesion}" ajax="false" icon="pi pi-list"/>
+                            </p:submenu>
+                            
+                        </p:menu>
+                        <style>
+                            .ui-widget {
+                                font-size: 10px;
+                            }
+                        </style>    
+                    </h:form>
+                </ui:insert>
+            </div>
+            <div id="content" class="left_content">
+                <ui:insert name="content">
+                    
+                </ui:insert>
+            </div>
+        </div>
+    </h:body>
+
+</html>

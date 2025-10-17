@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+        
+        <ui:composition template="./templatePrincipal.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <p:card>
+                        <h:form id="buscaGrupos">
+                            <p:growl id="msgs" showDetail="true"/>
+                            <p:focus for="IdTarjeta"/>
+
+                            <p:inputText id="IdTarjeta" accesskey="true" value="#{accesoBean.idTarjeta}" title="IdTarjeta" immediate="true" required="false" >
+                                <p:ajax update="listaA"  />
+                            </p:inputText>
+
+                        </h:form>
+                    </p:card>
+                    <h:form id="listaA"><<
+                        <h1><h:outputText value="Estudiante"/></h1>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Usuario :#{accesoBean.usuarioS}"  />
+                            <img src="resources/imagenes/2024/#{accesoBean.fotoS}.jpg" width="500" height="400" alt="TECNM"/>
+                        </p:panelGrid>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

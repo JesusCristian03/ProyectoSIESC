@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./templatePrincipal.xhtml">
+
+            <ui:define name="content">
+                <div class="card" id="center_right_content">        
+                    <h:form >
+                        <h2>
+                            Iniciar Sesión
+                        </h2>
+                        <h:panelGrid columns="2" cellpadding="6"  >
+                            <div class="ui-inputgroup">
+                                <div class="ui-inputgroup-addon"><i class="pi pi-user"></i></div>                                
+                                <p:inputText id="usr" value="#{loginBean.usuario}" required='true' placeholder="Usuario"/>
+                            </div>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" cellpadding="6">
+                            <div class="ui-inputgroup">
+                                <div class="ui-inputgroup-addon"><i class="pi pi-lock"></i></div>
+                                <p:password id="pass" value="#{loginBean.contrasena}" required='true' placeholder="Contraseña"/>
+                            </div>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" cellpadding="6">
+                            <p:commandButton value="Iniciar Sesion" action="#{loginBean.loginEstudiante}" ajax="false"  />
+                        </h:panelGrid>
+
+                    </h:form>
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

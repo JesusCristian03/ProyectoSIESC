@@ -1,0 +1,183 @@
+body {
+    background-color: #ffffff;
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    color: #000000;  
+    margin: 0;
+    height: 100%;
+
+}
+html{
+    height: 80vh;
+    
+}
+
+h1 {
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    border-bottom: 1px solid #000000; 
+    font-size:  16px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+}
+
+a:link, a:visited {
+    color: #045491;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+a:link:hover, a:visited:hover  {
+    color: #045491;
+    font-weight : bold;
+    text-decoration : underline;
+}
+form.nuevo-equipo{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 2 28%; /* Cada columna ocupa 48% para dejar espacio entre ellas */
+}
+form{
+    align-items: center;
+}
+.nuevo-equipo-col{
+   
+}
+.card{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border: 3px solid #ffffff;
+    border-radius: 8px;
+    padding: 3rem;
+}
+.responsive-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-content:  space-between;
+    gap: 15px;
+}
+.botones{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items:  center;
+    justify-content:  space-between;
+    align-content:  space-between;
+    margin: 2rem 0 2rem 0;
+}
+.responsive-grid > * {
+    flex: 1 1 28%; /* Cada columna ocupa 48% para dejar espacio entre ellas */
+}
+
+.file-upload-section {
+    margin-top: 20px;
+}
+
+.responsive-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se muevan a la siguiente línea */
+    justify-content: space-between; /* Espacio entre los elementos */
+    gap: 15px; /* Espacio entre columnas */
+}
+
+.flex-item {
+    flex: 1 1 calc(25% - 25px); /* 4 columnas en pantallas grandes */
+    box-sizing: border-box; /* Asegura que el padding se incluya en el tamaño */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Para pantallas pequeñas, cambiar a 2 columnas */
+@media (max-width: 768px) {
+    .flex-item {
+        flex: 1 1 calc(50% - 15px); /* 2 columnas en pantallas pequeñas */
+    }
+}
+
+/* Para pantallas aún más pequeñas */
+@media (max-width: 480px) {
+    .flex-item {
+        flex: 1 1 100%; /* 1 columna en pantallas muy pequeñas */
+    }
+}
+.terminar-button {
+        background-color: #FF0000; /* Cambia esto por el color que desees */
+        color: white; /* Cambia el color del texto */
+        border: none; /* Elimina el borde por defecto */
+        padding: 10px 20px; /* Ajusta el padding */
+        text-align: center; /* Centra el texto */
+        text-decoration: none; /* Elimina el subrayado */
+        display: inline-block; /* Permite ajustar el tamaño */
+        font-size: 16px; /* Ajusta el tamaño de la fuente */
+        margin: 4px 2px; /* Margen alrededor del botón */
+        cursor: pointer; /* Cambia el cursor al pasar por encima */
+        border-radius: 5px; /* Opcional: esquinas redondeadas */
+}
+    
+.invisible{
+    display:none;
+}   
+.ui-datatable-even {
+    background: #FF0000;
+}
+
+.ui-datatable-odd {
+    background: #FF00FF;
+}
+.disponible {
+    background-color: #0080C0;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.acreditado {
+    background-color: #A0D79F;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.cursando {
+    background-color: #603060;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.ordinario {
+    background-color: #FFFF66;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.repeticion {
+    background-color: #FF9900;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.especial {
+    background-color: #FF0000;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.nodisponible {
+    background-color: #CCCCCC;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}
+.blanco {
+    background-color: #FFFFFF;
+    padding: 5px;
+    text-align: center;
+    font-size: 11px
+}

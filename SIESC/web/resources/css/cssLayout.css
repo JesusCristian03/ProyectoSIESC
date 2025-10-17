@@ -1,0 +1,96 @@
+#top {
+    position: relative;
+    background-color: #045491;
+    color: white;
+    padding: 5px;
+    margin: 0px 0px 10px 0px;
+}
+
+#bottom {
+    position: relative;
+    background-color: #c2dfef;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+}
+
+#right {
+    float: right;
+    padding: 5px;
+    padding-top: 2rem;
+}
+.archivos{
+    float: right;
+}
+#content{
+   height: 100%;
+   padding: 4rem;
+   margin-left: 190px;
+}
+.right_content{
+    height: 100%;
+    width: 100%
+}
+#center_right_content{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.center_content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+}
+#left {
+    /*float: left;
+    padding: 5px;*/
+    float: left;
+    background-color: #ffffff;
+    padding: 0px;
+    width: 150px;
+}
+/*
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+
+
+.left_content {
+    background-color: #ffffff;
+    padding: 5px;
+    margin-left: 170px;
+}*/
+
+#top a:link, #top a:visited {
+  color: white;
+  font-weight : bold;
+  text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+  color: black;
+  font-weight : bold;
+  text-decoration : underline;
+}
+.flow{
+    display: flex;
+    width: 100%
+}
+.panel{
+    padding: 0px;
+}
+.ui-datatable-even {
+    background: #FF0000;
+}
+
+.ui-datatable-odd {
+    background: #FF00FF;
+}

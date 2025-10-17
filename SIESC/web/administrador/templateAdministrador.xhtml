@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <link rel="icon" href="#{resource['assets/itc.png']}" type="image/x-icon"/>
+        <title>Estudiante ITC</title>
+        
+    </h:head>
+
+    <h:body>
+
+
+        <div id="top" class="top">
+            <ui:insert name="top">
+                
+            </ui:insert>
+        </div>
+        <div>
+            <div id="left">
+                <ui:insert name="left">
+                    <div>
+                        <h:form>
+                            <p:megaMenu orientation="vertical" autoDisplay="false">
+                                <f:facet name="start">
+                                    <p:graphicImage name="images/primefaces-logo.svg" library="showcase" width="150" />
+                                </f:facet>
+                                
+                                <p:menuitem value="Agregar equipo" 
+                                            actionListener="#{menuBean.navigate('agregar')}" 
+                                             icon="pi pi-plus"
+                                             ajax="false"/>
+
+                                <p:menuitem value="Buscar equipo" 
+                                            actionListener="#{menuBean.navigate('buscar')}" 
+                                             icon="pi pi-search"  
+                                             ajax="false"/>
+                                <p:menuitem value="Más"
+                                           actionListener="#{menuBean.navigate('inicio')}"
+                                           icon="pi pi-fw pi-calendar"/>
+
+                
+
+                                <p:submenu label="Ajustes" icon="pi pi-fw pi-cog">
+
+                                </p:submenu>
+                            </p:megaMenu>
+                        </h:form>
+                    </div>
+                </ui:insert>
+            </div>
+            <div id="content" class="right_content">
+                <ui:insert name="content">
+                    
+                </ui:insert>
+            </div>
+        </div>
+    </h:body>
+
+</html>

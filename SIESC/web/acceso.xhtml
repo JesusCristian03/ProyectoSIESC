@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./templatePrincipal.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                <p:card>
+                    <h:form id="buscaGrupos">
+                        <p:growl id="msgs" showDetail="true"/>
+                        <p:focus for="IdTarjeta"/>
+                        
+                        <p:inputText id="IdTarjeta" accesskey="true" value="#{accesoBean.idTarjeta}" title="IdTarjeta" immediate="true" required="false" >
+                            <p:ajax update="listaA"  />
+                        </p:inputText>
+                        
+                    </h:form>
+                </p:card>
+                
+                
+                    <h:form id="listaA">
+                        <h1><h:outputText value="Lista Asistentes"/></h1>
+                        <p:dataTable value="#{accesoBean.listaAcceso}" var="item" paginator="true" rows="20">
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Control"/>
+                                </f:facet>
+                                <h:outputText value="#{item.fecha}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Carrera"/>
+                                </f:facet>
+                                <h:outputText value="#{item.tipo}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="ApellidoPaterno"/>
+                                </f:facet>
+                                <h:outputText value="#{item.nombre}"/>
+                            </p:column>
+                            
+                        </p:dataTable>
+                    </h:form>
+                </f:view>
+
+                
+                
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

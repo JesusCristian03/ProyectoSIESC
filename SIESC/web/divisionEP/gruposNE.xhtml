@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./templateDEP.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+
+                    <h:form id="horarioG">
+                        <h:outputScript>
+                            var maximoSeleccion = #{horarioCrearBean.creditos};
+                        </h:outputScript> 
+                        <p:panel header="CREAR GRUPO: " style="margin-bottom:10px;">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <p:outputLabel for="carrera" value="Carrera: "/>
+                                <p:selectOneMenu id="carrera" value="#{horarioCrearBean.carreraS}" style="width:100%" onchange="checkSelects()"  filter="true" filterMatchMode="contains">
+                                    <p:ajax listener="#{horarioCrearBean.cambioCarrera}" update="asignatura semestre grupo"/>
+                                    <f:selectItem itemLabel="SELECCIONA CARRERA" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{horarioCrearBean.listaPermisos}" var="listaPermiso" itemLabel="#{listaPermiso.reticula.nombreCarrera}" itemValue="#{listaPermiso.reticula.reticula}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="periodo" value="Periodo: "/>
+                                <p:selectOneMenu id="periodo" value="#{horarioCrearBean.periodoS}" style="width:100%" onchange="checkSelects()"  filter="true" filterMatchMode="contains">                                    
+                                    <p:ajax listener="#{horarioCrearBean.inicializarHorario}"/>
+                                    <f:selectItem itemLabel="SELECCIONA UN PERIODO" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{horarioCrearBean.listaPeriodoEscolar}" var="listaPeriodo" itemLabel="#{listaPeriodo.identificacionCorta}" itemValue="#{listaPeriodo.periodo}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="semestre" value="Semestre: "/>
+                                <p:selectOneMenu id="semestre" value="#{horarioCrearBean.semestreS}" style="width:100%" onchange="checkSelects()"  filter="true" filterMatchMode="contains">                                    
+                                    <p:ajax listener="#{horarioCrearBean.cambioSemestre}" update="asignatura" />
+                                    <f:selectItem itemLabel="SELECCIONA UN SEMESTRE" itemValue="0" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="SEMESTRE 1" itemValue="1"/>
+                                    <f:selectItem itemLabel="SEMESTRE 2" itemValue="2"/>
+                                    <f:selectItem itemLabel="SEMESTRE 3" itemValue="3"/>
+                                    <f:selectItem itemLabel="SEMESTRE 4" itemValue="4"/>
+                                    <f:selectItem itemLabel="SEMESTRE 5" itemValue="5"/>
+                                    <f:selectItem itemLabel="SEMESTRE 6" itemValue="6"/>
+                                    <f:selectItem itemLabel="SEMESTRE 7" itemValue="7"/>
+                                    <f:selectItem itemLabel="SEMESTRE 8" itemValue="8"/>
+                                    <f:selectItem itemLabel="SEMESTRE 9" itemValue="9"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="asignatura" value="Asignatura: " />
+                                <p:selectOneMenu id="asignatura" 
+                                                 value="#{horarioCrearBean.asignaturaS}" 
+                                                 style="width:100%" 
+                                                 filter="true" 
+                                                 filterMatchMode="contains">
+
+                                    <p:ajax listener="#{horarioCrearBean.actualizarCreditos}" 
+                                            update="grupo"
+                                            oncomplete="maximoSeleccion = args.creditos; console.log('Nuevo maximoSeleccion:', maximoSeleccion);" />
+
+                                    <f:selectItem itemLabel="SELECCIONA ASIGNATURA" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{horarioCrearBean.listaMateria}" 
+                                                   var="listaAsignatura" 
+                                                   itemLabel="#{listaAsignatura.materia.nombreCompletoMateria}" 
+                                                   itemValue="#{listaAsignatura.idMateriaCarrera}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="aulas" value="Aula: "/>
+
+                                <p:selectOneMenu id="aulas" value="#{horarioCrearBean.aulas}" style="width:100%" onchange="checkSelects()" filter="true" filterMatchMode="contains" >
+                                    <p:ajax />
+                                    <f:selectItem itemLabel="SELECCIONA AULA" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{horarioCrearBean.listaAulas}" var="listaAulas" itemLabel="#{listaAulas.aula}" itemValue="#{listaAulas.aula}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="grupos" value="Nombre Grupo" />
+                                <p:inputText id="grupos"
+                                             maxlength="3"
+                                             value="#{horarioCrearBean.valorgrupo}"
+                                             title="Namegroup"
+                                             required="true"
+                                             requiredMessage="El campo Nombre grupo es obligatorio."
+                                             style="width:400px">
+
+                                    <!-- Este bloque hace que al escribir o cambiar, se llame al método -->
+                                    <p:ajax event="input"
+                                            listener="#{horarioCrearBean.actualizarTabla}"
+                                            update="grupo"
+                                            process="@this" />
+                                </p:inputText>
+
+
+                                <p:outputLabel for="capgrupos" value="Estudiantes: "/>
+
+
+                                <p:inputNumber id="capgrupos" 
+                                               value="#{horarioCrearBean.numestudiantes}" 
+                                               required="true" 
+                                               requiredMessage="El campo es obligatorio"
+                                               minValue="0"
+                                               maxValue="100"      
+                                               inputStyle="width:400px" onchange="checkSelects()">
+
+                                    <p:ajax />
+                                </p:inputNumber>
+
+                                <p:growl id="growl" showDetail="true" sticky="false" life="4000"/>
+
+                            </h:panelGrid>
+
+                            <p:divider />
+
+
+                        </p:panel>
+
+                        <h:inputHidden id="posicionesSeleccionadas" value="#{horarioCrearBean.posicionesSeleccionadas}" />
+
+                        <p:commandButton value="Guardar Selección"
+                                         onclick="guardarSeleccionadas()"
+                                         action="#{horarioCrearBean.generarHorario()}" 
+                                         id="btnguardar"                               
+                                         update="horarioG growl"
+                                         process="horarioG"                                                               
+                                         />
+                        <p:remoteCommand name="doRedirect" actionListener="#{horarioCrearBean.redirectToPage}" />
+
+                        <h1><h:outputText value="List"/></h1>
+                        <p:dataTable value="#{horarioCrearBean.listaHorarioCrear}" id="grupo" var="item" editable="true" editMode="cell" widgetVar="tablaWidget" size="small" showGridlines="true">
+                            <p:ajax event="cellEdit" listener="#{horarioCrearBean.onCellEdit}" update="grupo"/>                           
+                            <p:column field="hora" headerText="Hora" sortable="false" filterable="false" selectRow="true">
+                                <f:facet name="header">
+                                    <h:outputText value="Hora"/>
+                                </f:facet>
+                                <h:outputText value="#{item.hora}"/>
+                            </p:column>
+                            <p:column headerText="Lunes" style="background-color: #{not empty item.lunes ? item.color : 'transparent'};">
+                                <f:facet name="header">
+                                    <h:outputText value="Lunes"/>
+                                </f:facet>
+                                <h:outputText value="#{item.lunes}"/>
+                            </p:column>
+                            <p:column headerText="Martes" style="background-color: #{not empty item.martes ? item.color : 'transparent'};">
+
+                                <f:facet name="header">
+                                    <h:outputText value="Martes"/>
+                                </f:facet>
+                                <h:outputText value="#{item.martes}"/>
+
+                            </p:column>
+                            <p:column headerText="Miercoles" 
+                                      style="background-color: #{not empty item.miercoles ? item.color : 'transparent'};">
+
+                                <f:facet name="header">
+                                    <h:outputText value="Miercoles"/>
+                                </f:facet>
+                                <h:outputText value="#{item.miercoles}"/>
+
+                            </p:column>
+                            <p:column headerText="Jueves" 
+                                      style="background-color: #{not empty item.jueves ? item.color : 'transparent'};">
+
+                                <f:facet name="header">
+                                    <h:outputText value="Jueves"/>
+                                </f:facet>
+                                <h:outputText value="#{item.jueves}"/>
+
+                            </p:column>
+                            <p:column headerText="Viernes" 
+                                      style="background-color: #{not empty item.viernes ? item.color : 'transparent'};">
+
+                                <f:facet name="header">
+                                    <h:outputText value="Viernes"/>
+                                </f:facet>
+                                <h:outputText value="#{item.viernes}"/>
+
+                            </p:column>
+                            <p:column headerText="Sabado" 
+                                      style="background-color: #{not empty item.sabado ? item.color : 'transparent'};">
+
+                                <f:facet name="header">
+                                    <h:outputText value="Sabado"/>
+                                </f:facet>
+                                <h:outputText value="#{item.sabado}"/>
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <script type="text/javascript">
+                            function asignarDataset() {
+                                //Busca todas las filas tr dentro del tbody de la tabla cuyo id es horarioG:grupo.
+                                const rows = document.querySelectorAll('#horarioG\\:grupo tbody tr');
+                                //Recorre cada fila y obtiene todas sus celdas td
+                                rows.forEach(function (row, rowIndex) {
+                                    const cells = row.querySelectorAll('td');
+                                    //Aquí se agregan atributos personalizados data-row y data-col a cada celda.
+                                    cells.forEach(function (cell, colIndex) {
+                                        cell.dataset.row = rowIndex;
+                                        cell.dataset.col = colIndex;
+                                    });
+                                });
+                                console.log(" asignarDataset() se ejecutó");
+                            }
+                        </script>   
+
+                        <script type="text/javascript">
+                            function checkSelects() {
+
+                            }
+                        </script>
+
+                        <script type="text/javascript">
+                            //Espera a que toda la página HTML + tabla termine de cargarse antes de ejecutar el código.
+                            document.addEventListener('DOMContentLoaded', function () {
+                                asignarDataset();
+                            });
+                        </script>                        
+
+                        <script type="text/javascript">
+                            //Escucha clics en todo el documento
+                            document.addEventListener('click', function (e) {
+
+                                var td = e.target.closest('td');
+                                if (!td)
+                                    return; // Si no es una celda, salir
+                                //Busca si el clic fue dentro de la tabla "horarioG:grupo"
+                                if (td.closest('#horarioG\\:grupo')) {
+
+                                    //Revisa si la celda está vacía
+                                    var contenido = td.textContent.trim();
+                                    // Solo celdas vacías
+                                    if (contenido === '') {
+                                        // Ver cuántas ya están seleccionadas
+                                        var seleccionadas = document.querySelectorAll('#horarioG\\:grupo td.celda-seleccionada').length;
+                                        if (!td.classList.contains('celda-seleccionada')) {
+                                            // Si aún no está seleccionada y se excede el máximo, no hacer nada
+                                            var boton = document.getElementById('horarioG:btnguardar');
+                                            if (seleccionadas >= maximoSeleccion) {
+                                                boton.disabled = false; // Activa el botón
+                                                // Opcional: mostrar alerta o mensaje visual
+
+                                                console.log("Límite de selección alcanzado.");
+                                                console.log("seleccionadas: " + seleccionadas);
+                                                console.log("maximoSeleccion: " + maximoSeleccion);
+                                                return;
+                                            } else {
+
+                                            }
+                                        }
+                                        //td.textContent = asignaturaSel; 
+                                        // Alternar la selección, Marca o desmarca la celda
+                                        td.classList.toggle('celda-seleccionada');
+                                    }
+                                }
+                            });
+                        </script>
+
+                        <script type="text/javascript">
+                            function guardarSeleccionadas() {
+                                asignarDataset();
+                                // Selecciona todas las celdas seleccionadas
+                                const celdas = document.querySelectorAll('#horarioG\\:grupo td.celda-seleccionada');
+                                const posiciones = [];
+                                console.log("Celdas seleccionadas:", celdas); //  mira qué celdas encuentra
+
+                                celdas.forEach(function (celda, index) {
+                                    const fila = celda.dataset.row;
+                                    const columna = celda.dataset.col;
+                                    console.log(`Celda ${index}: fila=${fila}, columna=${columna}`); // revisa los atributos
+
+                                    posiciones.push(fila + "," + columna);
+                                });
+                                const valorFinal = posiciones.join(";");
+                                console.log("Valor que se va a enviar al input hidden:", valorFinal); // revisa el string final
+
+                                const input = document.getElementById('horarioG:posicionesSeleccionadas');
+                                console.log("Input hidden encontrado:", input); // revisa que exista
+
+                                if (input) {
+                                    input.value = valorFinal;
+                                } else {
+                                    console.log("ERROR: No se encontró el input hidden.");
+                                }
+                                guardarSeleccionadas();
+                            }
+                        </script>
+                        <!-- ✅ CSS para resaltar celda -->
+                        <style>
+                            .celda-seleccionada {
+                                border: 2px solid #1976d2 !important;
+                                background-color: #e3f2fd !important;
+                                box-shadow: 0 0 5px #64b5f6;
+                                transition: all 0.2s ease;
+                            }
+
+                            .celda-insertada {
+                                background-color: #DAE3F3; /* azul claro */
+                                font-weight: bold;          /* opcional */
+                            }
+
+                        </style>
+                    </h:form>
+                </f:view>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,346 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./templateEstudiante.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <h1><h:outputText value="Estudiante"/></h1>
+                        <p:panelGrid columns="2" class="panel" style="">
+                            <p:outputLabel value="NoDeControl: #{inscripcionesBean.estudiante.noDeControl}"  />
+                            <p:outputLabel value="Estudiante: #{inscripcionesBean.estudiante.apellidoPaterno} #{inscripcionesBean.estudiante.apellidoMaterno} #{inscripcionesBean.estudiante.nombreAlumno}" />
+                            <p:outputLabel value="Carrera: #{inscripcionesBean.estudiante.reticula.nombreCarrera}"  />
+                            <p:outputLabel value="Semestre: #{inscripcionesBean.estudiante.semestre}"  />
+                        </p:panelGrid>
+                    </h:form>
+                    <h:form>
+                        <p:tabView>
+                            <f:facet name="actions">
+                                Global actions
+                            </f:facet>
+                            <p:tab title="Asignatura" >
+                                <f:facet name="actions">
+                                    Asignatura
+                                </f:facet>
+                                <h:form>
+                                    <h1><h:outputText value="List"/></h1>
+                                    <p:dataTable value="#{inscripcionesBean.listaM}" var="asignatura" rowStyleClass="registroPrueba" showGridlines="true">                                        
+                                        <p:column styleClass="#{asignatura.semestre1.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 1"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre1.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre1.nombreMateria}" rendered="#{asignatura.semestre1.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre1.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre1.nombreMateria}" rendered="#{not asignatura.semestre1.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre1.calificacion}" />
+                                            </div>  
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre2.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 2"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre2.materia}"/> 
+                                            </div>
+                                            
+                                            
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre2.nombreMateria}" rendered="#{asignatura.semestre2.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre2.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre2.nombreMateria}" rendered="#{not asignatura.semestre2.disponible eq 'true'}" />                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre2.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre3.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 3"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre3.materia}"/> 
+                                            </div>
+                                            
+                                            
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre3.nombreMateria}" rendered="#{asignatura.semestre3.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre3.nombreMateria}
+                                            </h:outputLink>
+                                            
+                                            
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre3.nombreMateria}" rendered="#{not asignatura.semestre3.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre3.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre4.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 4"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre4.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre4.nombreMateria}" rendered="#{asignatura.semestre4.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre4.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre4.nombreMateria}" rendered="#{not asignatura.semestre4.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre4.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre5.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 5"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre5.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre5.nombreMateria}" rendered="#{asignatura.semestre5.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre5.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre5.nombreMateria}" rendered="#{not asignatura.semestre5.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre5.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre6.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 6"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre6.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre6.nombreMateria}" rendered="#{asignatura.semestre6.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre6.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre6.nombreMateria}" rendered="#{not asignatura.semestre6.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre6.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre7.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 7"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre7.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre7.nombreMateria}" rendered="#{asignatura.semestre7.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre7.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre7.nombreMateria}" rendered="#{not asignatura.semestre7.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre7.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre8.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 8"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre8.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            
+                                            <p:commandLink process="@this"
+                                                            
+                                                           oncomplete="PF('seleecionMateria').show();" value="#{asignatura.semestre8.nombreMateria}">
+
+                                               <f:ajax listener="#{inscripcionesBean.onMateriaClick(asignatura.semestre8.materia)}"
+                                                       execute="@this"
+                                                       render="@none"/>
+
+                                               
+                                             </p:commandLink>
+                                            
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre8.nombreMateria}" rendered="#{not asignatura.semestre8.color eq 'disponible'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre8.calificacion}" />
+                                            </div>
+                                        </p:column>
+                                        <p:column styleClass="#{asignatura.semestre9.color}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Semestre 9"/>
+                                            </f:facet>
+                                            <div>
+                                               <h:outputText value="#{asignatura.semestre9.materia}"/> 
+                                            </div>
+                                            <!-- Si se cumple la condición, muestra el enlace -->
+                                            <h:outputLink value="#{asignatura.semestre9.nombreMateria}"  rendered="#{asignatura.semestre9.disponible eq 'true'}" onclick="PF('seleecionMateria').show(); return false;">
+                                                #{asignatura.semestre9.nombreMateria}
+                                            </h:outputLink>
+
+                                            <!-- Si NO se cumple la condición, muestra solo el texto plano -->
+                                            <h:outputText value="#{asignatura.semestre9.nombreMateria}" rendered="#{not asignatura.semestre9.disponible eq 'true'}" />
+                                            
+                                            <div>
+                                                <h:outputText value="#{asignatura.semestre9.calificacion}" />
+                                            </div> 
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:form>                                
+                                
+                                <h:form id="seleccion">
+                                    <p:dialog id="dlg"  header="Selecciona Grupo" showEffect="fade" modal="true" widgetVar="seleecionMateria" responsive="true">
+                                       
+                                           
+                                                
+                                        <div class="field">
+                                            <p:outputLabel for="name">Name</p:outputLabel>
+                                            <p:inputText id="name" value="" required="true" />
+                                        </div>
+                                                
+
+
+
+
+                                        <h:form>
+                                            <h1><h:outputText value="List"/></h1>
+                                            <p:dataTable value="#{inscripcionesBean.listaHorarioAsignatura}" var="item">
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Id"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.id}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Docente"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.docente}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Lunes"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.lunes}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Martes"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.martes}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Miercoles"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.miercoles}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Jueves"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.jueves}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Viernes"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.viernes}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Sabado"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.sabado}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Asignatura"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.asignatura}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Grupo"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.grupo}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Materia"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{item.materia}"/>
+                                                </p:column>
+                                                
+                                            </p:dataTable>
+                                        </h:form>
+
+
+                                       
+
+                                        
+                                    </p:dialog>
+                                </h:form>
+                                
+
+                            </p:tab>
+                            <p:tab>
+                                <f:facet name="actions">
+                                    Por Asignatura
+                                </f:facet>
+                                <f:facet name="title">
+                                    <span>Grupo</span> <p:badge value="3" severity="danger" class="ml-1"></p:badge>
+                                </f:facet>
+                                <p class="m-0">
+                                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+                                    illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
+                                    odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                                </p>
+                            </p:tab>
+                            <p:tab title="Header III">
+                                <p class="m-0">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+                                    et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+                                    Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                                </p>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./templatePrincipal.xhtml">
+
+            <ui:define name="top">
+                <f:view>
+                   
+
+                    <h:form>
+                        <h1><h:outputText value="List"/></h1>
+                        <p:dataTable value="#{estudianteBean.lista}" var="item" >
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="NoDeControl"/>
+                                </f:facet>
+                                <h:outputText value="#{item.noDeControl}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Carrera"/>
+                                </f:facet>
+                                <h:outputText value="#{item.carrera}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Especialidad"/>
+                                </f:facet>
+                                <h:outputText value="#{item.especialidad}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="NivelEscolar"/>
+                                </f:facet>
+                                <h:outputText value="#{item.nivelEscolar}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Semestre"/>
+                                </f:facet>
+                                <h:outputText value="#{item.semestre}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="EstatusAlumno"/>
+                                </f:facet>
+                                <h:outputText value="#{item.estatusAlumno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="PlanDeEstudios"/>
+                                </f:facet>
+                                <h:outputText value="#{item.planDeEstudios}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="ApellidoPaterno"/>
+                                </f:facet>
+                                <h:outputText value="#{item.apellidoPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="ApellidoMaterno"/>
+                                </f:facet>
+                                <h:outputText value="#{item.apellidoMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="NombreAlumno"/>
+                                </f:facet>
+                                <h:outputText value="#{item.nombreAlumno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="CurpAlumno"/>
+                                </f:facet>
+                                <h:outputText value="#{item.curpAlumno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="FechaNacimiento"/>
+                                </f:facet>
+                                <h:outputText value="#{item.fechaNacimiento}">
+                                    <f:convertDateTime pattern="MM/dd/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Sexo"/>
+                                </f:facet>
+                                <h:outputText value="#{item.sexo}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="EstadoCivil"/>
+                                </f:facet>
+                                <h:outputText value="#{item.estadoCivil}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="PromedioPeriodoAnterior"/>
+                                </f:facet>
+                                <h:outputText value="#{item.promedioPeriodoAnterior}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="PromedioAritmeticoAcumulado"/>
+                                </f:facet>
+                                <h:outputText value="#{item.promedioAritmeticoAcumulado}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="CreditosAprobados"/>
+                                </f:facet>
+                                <h:outputText value="#{item.creditosAprobados}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="CreditosCursados"/>
+                                </f:facet>
+                                <h:outputText value="#{item.creditosCursados}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="TipoServicioMedico"/>
+                                </f:facet>
+                                <h:outputText value="#{item.tipoServicioMedico}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="ClaveServicioMedico"/>
+                                </f:facet>
+                                <h:outputText value="#{item.claveServicioMedico}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="EscuelaProcedencia"/>
+                                </f:facet>
+                                <h:outputText value="#{item.escuelaProcedencia}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="DomicilioEscuela"/>
+                                </f:facet>
+                                <h:outputText value="#{item.domicilioEscuela}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="EntidadProcedencia"/>
+                                </f:facet>
+                                <h:outputText value="#{item.entidadProcedencia}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="CiudadProcedencia"/>
+                                </f:facet>
+                                <h:outputText value="#{item.ciudadProcedencia}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="CorreoElectronico"/>
+                                </f:facet>
+                                <h:outputText value="#{item.correoElectronico}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Foto"/>
+                                </f:facet>
+                                <h:outputText value="#{item.foto}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Firma"/>
+                                </f:facet>
+                                <h:outputText value="#{item.firma}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nip"/>
+                                </f:facet>
+                                <h:outputText value="#{item.nip}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Usuario"/>
+                                </f:facet>
+                                <h:outputText value="#{item.usuario}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="FechaActualizacion"/>
+                                </f:facet>
+                                <h:outputText value="#{item.fechaActualizacion}">
+                                    <f:convertDateTime pattern="MM/dd/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="PromedioFinalAlcanzado"/>
+                                </f:facet>
+                                <h:outputText value="#{item.promedioFinalAlcanzado}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Reticula"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reticula}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="PeriodoIngresoIt"/>
+                                </f:facet>
+                                <h:outputText value="#{item.periodoIngresoIt}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="UltimoPeriodoInscrito"/>
+                                </f:facet>
+                                <h:outputText value="#{item.ultimoPeriodoInscrito}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
