@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -82,6 +85,8 @@ public class HorarioCrearBean implements Serializable {
     private GruposServicioLocal gruposServicio;
 
     private List<HorarioCrear> listaHorarioCrear;
+    private List<HorarioCrear> listaHorarioBorrar;//Muestra los horarios que va a eliminar.
+
     private List<Carrera> listaCarrera;
     private List<Permisos> listaPermisos;
     private List<PeriodoEscolar> listaPeriodoEscolar;
@@ -95,6 +100,8 @@ public class HorarioCrearBean implements Serializable {
     private List<Horarios> listaHorarios; //Para guardar los horarios en la BD
     private List<Horarios> listaHorariosGenerados; //Para guardar los horarios en la BD
     private List<String> listacoordenadas;
+    private List<Horarios> horariosAEliminar;
+    private Optional<Horarios> horarioExacto;// Busco el horario el cual voy a actualizar. 
 
     private Usuario usuario;
     private Grupos grupo;
@@ -106,24 +113,162 @@ public class HorarioCrearBean implements Serializable {
     private Aulas aula;
     private HorarioCrear horariocrear;
     private Boolean puedeguardar = false;
-    Boolean camposllenos = false;
+    private Boolean camposllenos = false;//Verifico que todos los campos tengan algo en la vista.
     private Organigrama organigrama;
+    private Horarios materiaSeleccionada;
+    private boolean modoIntercambio = false;//Voy a intercambiar a modo horarios
+    private Boolean modoSeleccionMateria = false;//La uso para seleccionar o deseleccionar la materia de la tabla. 
+
+    private String nombreMateriaSeleccionada;//Sirve para el modo eliminar y modificar materia obtiene nombre de la materiaSeleccionada
+    private String aulaMateriaSeleccionada;//Sirve para el modo eliminar y modificar materia obtiene aula de la materiaselccionada
+    private String nuevaAulaSeleccionada;//Es el aula que se ha escogido dentro de la ventana emergente de modificar materia. 
+    private int filaMateriaSeleccionada;//Fila seleccionada para modificar horario
+    private int columnaMateriaSeleccionada;  //Columna seleccionada para modificar horario
+    private int filaSeleccionadaAnterior = -1;
+    private int columnaSeleccionadaAnterior = -1;
+
+    private int filaDestino;//Columnas donde sera pasado la materia.
+    private int columnaDestino;//Columnas donde será pasado la materia. 
 
     private int creditos = 0;
-    private String carreraS = "";
-    private String asignaturaS = "";
-    private String posicionesSeleccionadas = "";
-    private String periodoS = "";
-    private String semestreS = "";
-    private String aulas = "";
-    private String grupoS = "";
+    private String carreraS = "";//CarreraS de la lista de carreras 
+    private String asignaturaS = "";//AsignaturaS de la lista asignaturas
+    private String posicionesSeleccionadas = "";//Posicones que se han seleccionado en la tabla para guardar los horarios
+    private String periodoS = "";//PeriodoS sirve para guardar el periodo 20252
+    private String semestreS = "";//SemestreS sirve para guardar el numero del semestre el cual se ha seleccionado
+    private String aulas = "";//Aulas sirve para guardar el valor del aula que se ha seleccionado 
+    private String grupoS = "";//Grupos sirve para guardar el valor del grupo que se ha seleccionado. 
     private String personal = "";
     private int numestudiantes = 0;
     private String valorgrupo = "";
     private Boolean seleccionadocarreramateria2 = false;
+    private boolean eliminando = false;
+    private Boolean activarModificar = false;
 
     Date horainicioMateria;
     Date horainiciofinMateria;
+
+    public List<HorarioCrear> getListaHorarioBorrar() {
+        return listaHorarioBorrar;
+    }
+
+    public void setListaHorarioBorrar(List<HorarioCrear> listaHorarioBorrar) {
+        this.listaHorarioBorrar = listaHorarioBorrar;
+    }
+
+    public List<Horarios> getHorariosAEliminar() {
+        return horariosAEliminar;
+    }
+
+    public void setHorariosAEliminar(List<Horarios> horariosAEliminar) {
+        this.horariosAEliminar = horariosAEliminar;
+    }
+
+    public int getFilaDestino() {
+        return filaDestino;
+    }
+
+    public void setFilaDestino(int filaDestino) {
+        this.filaDestino = filaDestino;
+    }
+
+    public int getColumnaDestino() {
+        return columnaDestino;
+    }
+
+    public void setColumnaDestino(int columnaDestino) {
+        this.columnaDestino = columnaDestino;
+    }
+
+    public Optional<Horarios> getHorarioExacto() {
+        return horarioExacto;
+    }
+
+    public void setHorarioExacto(Optional<Horarios> horarioExacto) {
+        this.horarioExacto = horarioExacto;
+    }
+
+    public Boolean getModoSeleccionMateria() {
+        return modoSeleccionMateria;
+    }
+
+    public void setModoSeleccionMateria(Boolean modoSeleccionMateria) {
+        this.modoSeleccionMateria = modoSeleccionMateria;
+    }
+
+    public boolean isModoIntercambio() {
+        return modoIntercambio;
+    }
+
+    public void setModoIntercambio(boolean modoIntercambio) {
+        this.modoIntercambio = modoIntercambio;
+    }
+
+    public Boolean getActivarModificar() {
+        return activarModificar;
+    }
+
+    public void setActivarModificar(Boolean activarModificar) {
+        this.activarModificar = activarModificar;
+    }
+
+    public int getFilaMateriaSeleccionada() {
+        return filaMateriaSeleccionada;
+    }
+
+    public void setFilaMateriaSeleccionada(int filaMateriaSeleccionada) {
+        this.filaMateriaSeleccionada = filaMateriaSeleccionada;
+    }
+
+    public int getColumnaMateriaSeleccionada() {
+        return columnaMateriaSeleccionada;
+    }
+
+    public void setColumnaMateriaSeleccionada(int columnaMateriaSeleccionada) {
+        this.columnaMateriaSeleccionada = columnaMateriaSeleccionada;
+    }
+
+    public String getNuevaAulaSeleccionada() {
+        return nuevaAulaSeleccionada;
+    }
+
+    public void setNuevaAulaSeleccionada(String nuevaAulaSeleccionada) {
+        this.nuevaAulaSeleccionada = nuevaAulaSeleccionada;
+    }
+
+    public String getAulaMateriaSeleccionada() {
+        System.out.println("GetAulaMateriaSeleccionada" + aulaMateriaSeleccionada);
+        return aulaMateriaSeleccionada;
+    }
+
+    public void setAulaMateriaSeleccionada(String aulaMateriaSeleccionada) {
+        this.aulaMateriaSeleccionada = aulaMateriaSeleccionada;
+    }
+
+    public String getNombreMateriaSeleccionada() {
+        System.out.println("GetNombreMateriaSeleccionada" + nombreMateriaSeleccionada);
+        return nombreMateriaSeleccionada;
+    }
+
+    public void setNombreMateriaSeleccionada(String nombreMateriaSeleccionada) {
+        this.nombreMateriaSeleccionada = nombreMateriaSeleccionada;
+    }
+
+    public boolean isEliminando() {
+        return eliminando;
+    }
+
+    public void setEliminando(boolean eliminando) {
+        this.eliminando = eliminando;
+    }
+
+    public Horarios getMateriaSeleccionada() {
+        return materiaSeleccionada;
+    }
+
+    public void setMateriaSeleccionada(Horarios materiaSeleccionada) {
+        this.materiaSeleccionada = materiaSeleccionada;
+    }
 
     public Organigrama getOrganigrama() {
         return organigrama;
@@ -335,65 +480,38 @@ public class HorarioCrearBean implements Serializable {
         this.listaSemestres = listaSemestres;
     }
 
-    public void actualizarTabla() {
-        verificacionDeCampos();//Verifica que los campos esten llenos antes de actualizar la tabla por los datos actuales
-        inicializarHorario();//Asi evitamos que se sobreescriba la informacion que se actualiza en la tabla 
-        materiasCarreras = materiasCarrerasServicio.buscarPorId(Integer.parseInt(asignaturaS));
+    public void valoresCelda() {//Mostrar mensajes de lo que se ha obtenido
 
-        organigrama = organigramaServicio.buscarPorId(materiasCarreras.getMateria().getClaveArea().getClaveArea());
-        if (!"".equals(carreraS)
-                && !"".equals(semestreS)
-                && !"".equals(periodoS)
-                && !"".equals(valorgrupo)) {
-            Carrera carrera = carreraServicio.buscarPorId(Integer.parseInt(carreraS));
-            listaHorariosGenerados = horarioServicio.buscarHorariosPorGrupos(carrera, Integer.parseInt(semestreS), periodoEscolarServicio.buscarPorId(periodoS), valorgrupo);
-            System.out.println("Se encontro horarios:->" + listaHorariosGenerados.size());
-            if (listaHorariosGenerados.size() != 0) {
-                Calendar cal = Calendar.getInstance();
-                Date horainicial = new Date();
-                int hora, fila, columna;
-                for (int i = 0; i < listaHorariosGenerados.size(); i++) {
-                    horario = listaHorariosGenerados.get(i);
-                    horainicial = horario.getHoraInicial();
-                    cal.setTime(horainicial);
-                    hora = cal.get(Calendar.HOUR_OF_DAY); // obtiene la hora en formato 24h
-                    fila = obtenerFilaHorario(hora);
-                    columna = horario.getDiaSemana() - 1;
-                    for (int j = 0; j < listaHorarioCrear.size(); j++) {//Recorrer la tabla primero por las filas
-                        horariocrear = listaHorarioCrear.get(j);
-
-                        horariocrear.setColor("#" + organigrama.getColor());//Poner el color que le corresponde a las materias. 
-                        if (j == fila) {
-                            asignarDatoSemana(horariocrear, columna, horario);
-                            break;
-                        }
-
-                    }
-                }
-            }
-        }
+        System.out.println("=== ENTRE A CONFIRMAR/INTERCAMBIAR===");
+        System.out.println("Nombre: " + nombreMateriaSeleccionada);
+        System.out.println("Aula actual: " + aulaMateriaSeleccionada);
+        System.out.println("Fila: " + filaMateriaSeleccionada);
+        System.out.println("Columna: " + columnaMateriaSeleccionada);
     }
 
-    public Boolean verificarMateriaInsertada() {
-        String materia = materiasCarreras.getMateria().getNombreCompletoMateria();
-        for (HorarioCrear horariocrear : listaHorarioCrear) {
-            String[] dias = {
-                horariocrear.getLunes(),
-                horariocrear.getMartes(),
-                horariocrear.getMiercoles(),
-                horariocrear.getJueves(),
-                horariocrear.getViernes(),
-                horariocrear.getSabado()
-            };
+    public void encontrarMateriaDeCelda() {//Encuentra la materia de la celda en la lista de horarios generados
+        // Buscar el horario exacto
+        horarioExacto = listaHorariosGenerados.stream()
+                .filter(h -> h.getMateria().getNombreCompletoMateria().equalsIgnoreCase(nombreMateriaSeleccionada.trim())
+                && h.getAula().getAula().equalsIgnoreCase(aulaMateriaSeleccionada.trim())
+                && ConvertirDateAInt(h) == filaMateriaSeleccionada - 1
+                && (h.getDiaSemana() - 1) == columnaMateriaSeleccionada)
+                .findFirst();
 
-            for (String dia : dias) {
-                if (materia.equals(dia)) { // usar equals, no ==
-                    addMessage(FacesMessage.SEVERITY_FATAL, "INFO", "MATERIA ENCONTRADA");
-                    return true; // si solo quieres un mensaje por fila
-                }
-            }
-        }
-        return false;
+    }
+
+    public int ConvertirDateAInt(Horarios h) {//Convierto el tipo date a un entero mejor 
+
+        Calendar cal = Calendar.getInstance();
+        Date horainicial = new Date();
+        int hora, fila;
+
+        horainicial = h.getHoraInicial();
+        cal.setTime(horainicial);
+        hora = cal.get(Calendar.HOUR_OF_DAY); // obtiene la hora en formato 24h
+        fila = obtenerFilaHorario(hora);
+        return fila;
+
     }
 
     public int obtenerFilaHorario(int hora) {
@@ -429,6 +547,594 @@ public class HorarioCrearBean implements Serializable {
                 return -1; // hora fuera de rango
         }
 
+    }
+
+    public String ConvertirDateAHora(Horarios h) {//Convierto el tipo date a un 7:00-8:00;
+
+        Calendar cal = Calendar.getInstance();
+        Date horainicial = new Date();
+        int hora;
+        String horaMateria;
+
+        horainicial = h.getHoraInicial();
+        cal.setTime(horainicial);
+        hora = cal.get(Calendar.HOUR_OF_DAY); // obtiene la hora en formato 24h
+        horaMateria = obtenerStringHorario(hora);
+        return horaMateria;
+
+    }
+
+    public String obtenerStringHorario(int hora) {
+
+        switch (hora) {
+            case 7:
+                return "7:00 - 8:00";
+            case 8:
+                return "8:00 - 9:00";
+            case 9:
+                return "9:00 - 10:00";
+            case 10:
+                return "10:00 - 11:00";
+            case 11:
+                return "11:00 - 12:00";
+            case 12:
+                return "12:00 - 13:00";
+            case 13:
+                return "13:00 - 14:00";
+            case 14:
+                return "14:00 - 15:00";
+            case 15:
+                return "15:00 - 16:00";
+            case 16:
+                return "16:00 - 17:00";
+            case 17:
+                return "17:00 - 18:00";
+            case 18:
+                return "18:00 - 19:00";
+            case 19:
+                return "19:00 - 20:00";
+            default:
+                return "00:00 - 00:00"; // hora fuera de rango
+        }
+
+    }
+
+    public void activarEliminar() {//Activo el color de fondo del modo eliminar
+        eliminando = !eliminando;
+        //Para evitar que se empalmen los horarios en colores.
+        modoIntercambio = false;
+        activarModificar = false;
+        modoSeleccionMateria = false;
+        if (eliminando) {
+            cambiarModoColorTabla("F8D5D4");
+        } else {
+            actualizarTabla();
+        }
+    }
+
+    // 🔹 BOTÓN MODIFICAR
+    public void activarModoModificar() {//Para poner todo en naranja para modificar
+        activarModificar = !activarModificar;
+        //Para evitar que se empalmen los horarios en colores.
+        modoIntercambio = false;
+        eliminando = false;
+        modoSeleccionMateria = false;
+        if (activarModificar) {
+            cambiarModoColorTabla("FEA785");
+        } else {
+            actualizarTabla();
+        }
+
+    }
+
+    // 🔹 BOTÓN INTERCAMBIO
+    public void activarModoIntercambio() {
+        modoIntercambio = !modoIntercambio; // si ya estaba, lo desactiva
+        //Para evitar que se empalmen los horarios en colores.
+        activarModificar = false;
+        eliminando = false;
+        modoSeleccionMateria = false;
+        if (modoIntercambio) {
+            System.out.println("VariableModoIntercambio" + modoIntercambio);
+            cambiarModoColorTabla("A6E8CC");
+        } else {
+            actualizarTabla();
+        }
+
+    }
+
+    public void cambiarModoColorTabla(String x) {//Cambia todo la tabla por un solo color pero primero tengo que darle j  color yo.
+        System.out.println("listaHorariosGenerados.size" + listaHorariosGenerados.size());
+        if (listaHorariosGenerados.size() != 0) {
+            Calendar cal = Calendar.getInstance();
+            Date horainicial = new Date();
+            int hora, fila, columna;
+
+            for (int i = 0; i < listaHorariosGenerados.size(); i++) {
+                horario = listaHorariosGenerados.get(i);
+
+                horainicial = horario.getHoraInicial();
+                cal.setTime(horainicial);
+                hora = cal.get(Calendar.HOUR_OF_DAY); // obtiene la hora en formato 24h
+                fila = obtenerFilaHorario(hora);
+                columna = horario.getDiaSemana() - 1;
+                for (int j = 0; j < listaHorarioCrear.size(); j++) {//Recorrer la tabla primero por las filas
+                    horariocrear = listaHorarioCrear.get(j);
+                    if (j == fila) {
+                        //  horariocrear.setColor("#3B0000");//Poner el color que le corresponde a las materias. 
+                        asignarDatoSemana(horariocrear, columna, horario, "#" + x, "#3B0000");
+                        break;
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    /*  public void asignarMateriaSeleccionadaI() {//Sacar todas las variables de la materia que voy a modificar. 
+        Map<String, String> params = FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap();
+        nombreMateriaSeleccionada = params.get("nombre");
+        aulaMateriaSeleccionada = params.get("aula");
+        filaMateriaSeleccionada = Integer.parseInt(params.get("fila"));
+        columnaMateriaSeleccionada = Integer.parseInt(params.get("columna"));
+
+        System.out.println("IMateria seleccionada: " + nombreMateriaSeleccionada);
+        System.out.println("IAula: " + aulaMateriaSeleccionada);
+        System.out.println("IFila: " + filaMateriaSeleccionada);
+        System.out.println("IColumna: " + columnaMateriaSeleccionada);
+
+    }*/
+    public void asignarMateriaSeleccionadaRC() {//Sacar todas las variables de la materia que voy a eliminar y mostrarlas en el cuadro de dialogo emergente. 
+        Map<String, String> params = FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap();
+        nombreMateriaSeleccionada = params.get("nombre");
+        aulaMateriaSeleccionada = params.get("aula");
+        System.out.println("Materia seleccionada: " + nombreMateriaSeleccionada);
+        System.out.println("Aula: " + aulaMateriaSeleccionada);
+        addMessage(FacesMessage.SEVERITY_INFO, "MATERIA", nombreMateriaSeleccionada + " AULA:" + aulaMateriaSeleccionada);
+        
+        modoEliminarSeleccionado();//Pinta de color rojo mas oscuro con letra blanca cuales he seleccionado
+
+        obtenerHorasDeMateriaEiliminar();  //Obtiene de la lista Horarios Generados es decir lo que se obtuvo de la base los Horarios que corresponde
+
+        HorarioCrear h = new HorarioCrear();//Solo le voy a dar un solo objeto a ListaHorarioBorrar 
+
+        int[] conteoDias = new int[6];//Si vuelve a repetirse el dia en el cual va ser puesto la materia, es decir si una materia se toma mas de 1 hora al dia. 
+        listaHorarioBorrar = new ArrayList<>();
+        h.setHora(nombreMateriaSeleccionada);//Poner en la primera columna la materia que he seleccionado
+        // Eliminar de la base de datos
+        for (int i = 0; i < horariosAEliminar.size(); i++) {
+            Horarios y = horariosAEliminar.get(i);
+            //P1: ObjetoHorarioCrear para la TablaBorrarMensajeEmergente. P2. Dia de la semana de un horarioEliminar (1). P3: Hora devuelta: 7:00-8:00
+            insertarValoresListaHorariosBorrarColumna(h, (int) (y.getDiaSemana()-1), ConvertirDateAHora(y), conteoDias);
+
+            //Le doy solo un objeto HorarioCrear y le agrego 
+        }
+
+        listaHorarioBorrar.add(h); // agrega el único elemento
+
+    }
+
+    public void insertarValoresListaHorariosBorrarColumna(HorarioCrear h, int diaSemana, String horaString, int[] conteoDias) {
+        String guardarValorAnterior;
+        switch (diaSemana) {
+            case 1: // Lunes
+                if (conteoDias[0] == 0) {
+                    h.setLunes(horaString);
+                } else {
+                    guardarValorAnterior = h.getLunes();
+                    h.setLunes(guardarValorAnterior + "  " + horaString);
+                }
+                conteoDias[0]++;
+                break;
+            case 2: // Martes
+                if (conteoDias[1] == 0) {
+                    h.setMartes(horaString);
+                } else {
+                    guardarValorAnterior = h.getMartes();
+                    h.setMartes(guardarValorAnterior + "  " + horaString);
+                }
+                conteoDias[1]++;
+                break;
+            case 3: // Miércoles
+                if (conteoDias[2] == 0) {
+                    h.setMiercoles(horaString);
+                } else {
+                    guardarValorAnterior = h.getMiercoles();
+                    h.setMiercoles(guardarValorAnterior + "  " + horaString);
+                }
+                conteoDias[2]++;
+                break;
+            case 4: // Jueves
+                if (conteoDias[3] == 0) {
+                    h.setJueves(horaString);
+                } else {
+                    guardarValorAnterior = h.getJueves();
+                    h.setJueves(guardarValorAnterior + "  " + horaString);
+                }
+                conteoDias[3]++;
+                break;
+            case 5: // Viernes
+                if (conteoDias[4] == 0) {
+                    h.setViernes(horaString);
+                } else {
+                    guardarValorAnterior = h.getViernes();
+                    h.setViernes(guardarValorAnterior + "  " + horaString);
+                }
+                conteoDias[4]++;
+                break;
+            case 6: // Sábado
+                if (conteoDias[5] == 0) {
+                    h.setSabado(horaString);
+                } else {
+                    guardarValorAnterior = h.getSabado();
+                    h.setSabado(guardarValorAnterior + "  " + horaString);
+                }
+                conteoDias[5]++;
+                break;
+            default:
+                System.out.println("Día de la semana inválido");
+                break; // hora fuera de rango
+        }
+
+    }
+
+    public void asignarMateriaSeleccionadaM() {//Sacar todas las variables de la materia que voy a modificar para el cuadro de dialogo emergente de modificar
+        Map<String, String> params = FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap();
+        nombreMateriaSeleccionada = params.get("nombre");
+        aulaMateriaSeleccionada = params.get("aula");
+        filaMateriaSeleccionada = Integer.parseInt(params.get("fila"));
+        columnaMateriaSeleccionada = Integer.parseInt(params.get("columna"));
+
+        System.out.println("MMateria seleccionada: " + nombreMateriaSeleccionada);
+        System.out.println("MAula: " + aulaMateriaSeleccionada);
+        System.out.println("MFila: " + filaMateriaSeleccionada);
+        System.out.println("MColumna: " + columnaMateriaSeleccionada);
+
+        addMessage(FacesMessage.SEVERITY_INFO, "MATERIA SELECCIONADA", nombreMateriaSeleccionada + "  " + aulaMateriaSeleccionada);
+    }
+
+    public void confirmarModificarMateria() {//Se actualiza el aula que he escogido en la ventana emergente de modificar dentro de la BD y del bean y la vista 
+        valoresCelda();
+        encontrarMateriaDeCelda();
+        // Usar el resultado
+        if (horarioExacto.isPresent()) {
+            Horarios horario = horarioExacto.get();
+            System.out.println("NuevaAulasSeleccionada" + nuevaAulaSeleccionada);
+            // Buscar la nueva aula seleccionada en el combobox
+            Aulas nuevaAula = aulasServicio.buscarPorId(nuevaAulaSeleccionada);
+            // (usa el ID real que el usuario seleccionó del combobox)
+
+            if (nuevaAula == null) {
+
+                addMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "El aula seleccionada no existe.");
+                return;
+            }
+
+            // Actualizamos el aula
+            horario.setAula(nuevaAula);
+            horarioServicio.actualizar(horario);
+
+            // Refrescar la lista local (opcional, si quieres ver reflejado el cambio en la vista)
+            Carrera carrera = carreraServicio.buscarPorId(Integer.parseInt(carreraS));
+            this.listaHorariosGenerados = horarioServicio.buscarHorariosPorGrupos(carrera, Integer.parseInt(semestreS), periodoEscolarServicio.buscarPorId(periodoS), valorgrupo);
+            //actualizarTabla()
+
+            addMessage(FacesMessage.SEVERITY_INFO, "ÉXITO", "El aula se modificó correctamente.");
+            activarModoModificar();
+            // Actualizar la tabla visualmente
+            PrimeFaces.current().ajax().update("horarioG:grupo");
+        } else {
+            System.out.println("No se encontró el horario exacto.");
+        }
+
+    }
+
+    public void cambiarMateriaSeleccionadaX() {//Metodo por si quiero cambiar el color pero por el Bean
+        Map<String, String> params = FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap();
+
+        int fila = Integer.parseInt(params.get("fila"));
+        int columna = Integer.parseInt(params.get("columna"));
+        String nombre = params.get("nombre");
+        String aula = params.get("aula");
+
+        System.out.println("Materia seleccionada: " + nombre + " | Aula: " + aula);
+
+        addMessage(FacesMessage.SEVERITY_INFO, "MATERIA SELECCIONADA", "MATERIA: " + nombre + " AULA: " + aula);
+        // Si es la misma materia que ya estaba seleccionada → deselecciona
+
+        // Nueva selección
+        filaMateriaSeleccionada = fila;
+        columnaMateriaSeleccionada = columna;
+        nombreMateriaSeleccionada = nombre;
+        aulaMateriaSeleccionada = aula;
+
+        // Cambia color de la nueva seleccionada
+        modificarSeleccion();
+
+    }
+
+    private void deseleccionarAnterior() {
+        if (filaSeleccionadaAnterior == -1 || columnaSeleccionadaAnterior == -1) {
+            return;
+        }
+        HorarioCrear hc = listaHorarioCrear.get(filaSeleccionadaAnterior - 1);
+        modificarColor(hc, columnaSeleccionadaAnterior, "#A6E8CC", "#3B0000");
+    }
+
+    public void modificarSeleccion() {
+
+        for (int i = 0; i < listaHorarioCrear.size(); i++) {//Recorro la tabla ListaHorariosGenerar
+            if (i == (filaMateriaSeleccionada - 1)) {//Si encuentro la fila a la cual corresponde.
+                HorarioCrear hc = listaHorarioCrear.get(i);//Tomo la fila
+                if (!modoSeleccionMateria) {//Verifica que 
+                    modificarColor(hc, columnaMateriaSeleccionada, "#04BC86", "#FFFFFF");
+                    //hc.setColor("#FFFFFF");
+                    modoSeleccionMateria = true;
+                    //System.out.println("ENTRO->*" + i);
+
+                    addMessage(FacesMessage.SEVERITY_INFO, "INFORMACION", "SE HA SELECCIONADO MATERIA");
+                    System.out.println("SE HA SELECCIONADO MATERIA");
+                    return;
+                }
+
+            }
+        }
+    }
+
+    public void modificarColor(HorarioCrear x, int y, String colorFondo, String colorLetra) {//Le agrego el color de fondo y color de letra a mi dia de la semana.
+        String materiayaula;
+
+        switch (y) {
+            case 1:
+                materiayaula = getSepararAtributos(x.getLunes(), 0);
+                x.setLunes(materiayaula + "  " + colorFondo + "  " + colorLetra);
+                //System.out.println("ValorMetodoModificarColor" + x.getLunes());
+                break;
+            case 2:
+                materiayaula = getSepararAtributos(x.getMartes(), 0);
+                x.setMartes(materiayaula + "  " + colorFondo + "  " + colorLetra);
+                //System.out.println("ValorMetodoModificarColor" + x.getMartes() + "  " + colorLetra);
+                break;
+            case 3:
+                materiayaula = getSepararAtributos(x.getMiercoles(), 0);
+                x.setMiercoles(materiayaula + "  " + colorFondo + "  " + colorLetra);
+                //System.out.println("ValorMetodoModificarColor" + x.getMiercoles() + "  " + colorLetra);
+                break;
+            case 4:
+                materiayaula = getSepararAtributos(x.getJueves(), 0);
+                x.setJueves(materiayaula + "  " + colorFondo + "  " + colorLetra);
+                // System.out.println("ValorMetodoModificarColor" + x.getJueves() + "  " + colorLetra);
+                break;
+            case 5:
+                materiayaula = getSepararAtributos(x.getViernes(), 0);
+                x.setViernes(materiayaula + "  " + colorFondo + "  " + colorLetra);
+                // System.out.println("ValorMetodoModificarColor" + x.getViernes() + "  " + colorLetra);
+                break;
+            case 6:
+                materiayaula = getSepararAtributos(x.getSabado(), 0);
+                x.setSabado(materiayaula + "  " + colorFondo + "  " + colorLetra);
+                // System.out.println("ValorMetodoModificarColor" + x.getSabado() + "  " + colorLetra);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void moverMateriaSeleccionada() {//Cuando se intercambie la materia dentro de la tabla. 
+
+        Map<String, String> params = FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap();
+        filaDestino = Integer.parseInt(params.get("filaDestino"));
+        columnaDestino = Integer.parseInt(params.get("columnaDestino"));
+
+        System.out.println("MovMateria seleccionada: " + nombreMateriaSeleccionada);
+        System.out.println("MovAula: " + aulaMateriaSeleccionada);
+        System.out.println("MovFila: " + filaMateriaSeleccionada);
+        System.out.println("MovColumna: " + columnaMateriaSeleccionada);
+        System.out.println("MovMover a fila " + filaDestino + ", columna " + columnaDestino);
+
+        encontrarMateriaDeCelda();
+
+        if (horarioExacto.isPresent()) {
+            Horarios horario = horarioExacto.get();
+            horario.setDiaSemana((short) (columnaDestino + 1));//Guarda el dia de la semana con numero. 
+            asignarHoras(filaDestino);//Elige primero el rango que va a convertir, por ejemplo "7:00-8:00" los transforma a date 7 y 8. 
+            horario.setHoraInicial(horainicioMateria);
+            horario.setHoraFinal(horainiciofinMateria);
+            horarioServicio.actualizar(horario);
+
+            // Refrescar la lista local (opcional, si quieres ver reflejado el cambio en la vista)
+            //Carrera carrera = carreraServicio.buscarPorId(Integer.parseInt(carreraS));
+            //this.listaHorariosGenerados = horarioServicio.buscarHorariosPorGrupos(carrera, Integer.parseInt(semestreS), periodoEscolarServicio.buscarPorId(periodoS), valorgrupo);
+            actualizarTabla();
+            cambiarModoColorTabla("A6E8CC");
+            modoSeleccionMateria = false;
+            filaSeleccionadaAnterior = -1;
+            columnaSeleccionadaAnterior = -1;
+            //activarModoIntercambio();
+            //activarModificar();
+            System.out.println("Se ha actualizado intercambio de materia");
+            addMessage(FacesMessage.SEVERITY_INFO, "INFO", "SE HA ACTUALIZADO INTERCAMBIO DE MATERIA");
+
+        } else {
+            System.out.println("No se encontró el horario exacto.");
+            addMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "NO SE ENCONTRÓ EL HORARIOE EXACTO");
+        }
+
+        // Aquí puedes hacer la lógica de intercambio real:
+        // 1. Verificar que el destino está vacío.
+        // 2. Modificar los valores en listaHorariosGenerados.
+        // 3. Actualizar la tabla si es necesario.
+    }
+
+    public void limpiarVariablesDeEstadoEliminar() {
+
+        // Limpiar variables y estado
+        nombreMateriaSeleccionada = null;
+        aulaMateriaSeleccionada = null;
+        eliminando = false;
+        modoSeleccionMateria = false;
+
+        actualizarTabla();
+        cambiarModoColorTabla("F8D5D4");
+        System.out.println("Limpiando cancelar....");
+        addMessage(FacesMessage.SEVERITY_WARN, "CANCELAR", "LIMPIANDO CANCELAR.");
+    }
+
+    public void confirmarEliminarMateria() {
+
+        System.out.println("Ejecutar Nombre materia seleccionada:" + nombreMateriaSeleccionada);
+        System.out.println("Ejecutar Aula materia seleccionada:" + aulaMateriaSeleccionada);
+
+        if (nombreMateriaSeleccionada == null || aulaMateriaSeleccionada == null) {
+            System.out.println("⚠ No hay materia o aula seleccionada.");
+            return;
+        }
+
+        obtenerHorasDeMateriaEiliminar();// Filtrar todos los horarios que coincidan con materia
+
+        // Eliminar de la base de datos
+        for (Horarios h : horariosAEliminar) {//Cuando acabe de eliminar en la BD 
+            horarioServicio.eliminar(h);
+        }
+
+        for (Horarios h : horariosAEliminar) {
+            gruposServicio.eliminar(h.getIdGrupo());
+        }
+
+        // Eliminar de la lista en memoria
+        listaHorariosGenerados.removeAll(horariosAEliminar);
+
+        limpiarVariablesDeEstadoEliminar();
+        actualizarTabla();
+        addMessage(FacesMessage.SEVERITY_WARN, "MATERIA ELIMINADA", "Se eliminaron " + horariosAEliminar.size() + " coincidencias de la materia seleccionada.");
+        // Actualiza la tabla en pantalla (si tienes método para ello)
+
+    }
+
+    public void obtenerHorasDeMateriaEiliminar() {
+        // Filtrar todos los horarios que coincidan con materia
+        horariosAEliminar = listaHorariosGenerados.stream()
+                .filter(h -> h.getMateria().getNombreCompletoMateria().equalsIgnoreCase(nombreMateriaSeleccionada.trim())
+                )
+                .collect(Collectors.toList());
+
+        if (horariosAEliminar.isEmpty()) {
+
+            addMessage(FacesMessage.SEVERITY_WARN, "SIN COINCIDENCIAS", "No se encontraron horarios con esa materia y aula.");
+            return;
+        }
+
+    }
+
+    public void modoEliminarSeleccionado() {//Aplicarle color rojo pastel cuando seleccione una materia.
+
+        columnaMateriaSeleccionada = 0;
+
+        for (int i = 0; i < listaHorarioCrear.size(); i++) {//Recorro la tabla ListaHorariosGenerar para encontrar coincidencias
+            //Es decir encuentro CALCULO DIFERENCIAL compara en todo los horarios 
+            HorarioCrear hc = listaHorarioCrear.get(i);//Tomo la fila
+            if (!modoSeleccionMateria) {//Verifica que 
+                String[] dias = {hc.getLunes(), hc.getMartes(), hc.getMiercoles(), hc.getJueves(), hc.getViernes(), hc.getSabado()};
+                for (int j = 0; j < dias.length; j++) {
+                    String dia = dias[j];
+                    if (dia != null && !dia.isEmpty()) {
+                        String valor = getSepararAtributos(dia, 3);
+                        if (valor.equals(nombreMateriaSeleccionada)) {
+                            columnaMateriaSeleccionada = j + 1; // j=0 → lunes = 1
+                            modificarColor(hc, columnaMateriaSeleccionada, "#AD1C09", "#FFFFFF");
+
+                            System.out.println("Posicion i:->" + i + "Posicion j:->" + j);
+                        }
+                    }
+                }
+                columnaMateriaSeleccionada = 0;
+
+            }
+
+        }
+        modoSeleccionMateria = true;
+        //Agregar una de modoSeleccionMateria;
+        //Comparar con el tamaño encontrado 
+        addMessage(FacesMessage.SEVERITY_INFO, "MATERIA", nombreMateriaSeleccionada);
+        System.out.println("SE HA SELECCIONADO MATERIA");
+    }
+
+    public void mostrarNotificacionCeldaMateria() {
+        addMessage(FacesMessage.SEVERITY_WARN, "EMPALME MATERIA", "NO PUEDES PONER LA MATERIA EN UN HORARIO OCUPADO");
+        actualizarTabla();
+        cambiarModoColorTabla("A6E8CC");
+        modoSeleccionMateria = false;
+        filaSeleccionadaAnterior = -1;
+        columnaSeleccionadaAnterior = -1;
+    }
+
+    public void actualizarTabla() {
+        System.out.println("ENTREEEEEEEEEEE");
+        verificacionDeCamposActualizado();//Verifica que los campos esten llenos antes de actualizar la tabla por los datos actuales
+        inicializarHorario();//Asi evitamos que se sobreescriba la informacion que se actualiza en la tabla.
+
+        if (!"".equals(carreraS)
+                && !"".equals(semestreS)
+                && !"".equals(periodoS)
+                && !"".equals(valorgrupo)) {
+
+            Carrera carrera = carreraServicio.buscarPorId(Integer.parseInt(carreraS));
+            listaHorariosGenerados = horarioServicio.buscarHorariosPorGrupos(carrera, Integer.parseInt(semestreS), periodoEscolarServicio.buscarPorId(periodoS), valorgrupo);
+            System.out.println("Se encontro horarios:->" + listaHorariosGenerados.size());
+
+            if (listaHorariosGenerados.size() != 0) {
+                Calendar cal = Calendar.getInstance();
+                Date horainicial = new Date();
+                int hora, fila, columna;
+                for (int i = 0; i < listaHorariosGenerados.size(); i++) {
+                    horario = listaHorariosGenerados.get(i);
+                    materiasCarreras = materiasCarrerasServicio.buscarPorId(horario.getIdGrupo().getIdMateriaCarrera().getIdMateriaCarrera());
+                    organigrama = organigramaServicio.buscarPorId(materiasCarreras.getMateria().getClaveArea().getClaveArea());
+                    horainicial = horario.getHoraInicial();
+                    cal.setTime(horainicial);
+                    hora = cal.get(Calendar.HOUR_OF_DAY); // obtiene la hora en formato 24h
+                    fila = obtenerFilaHorario(hora);
+                    columna = horario.getDiaSemana() - 1;
+                    for (int j = 0; j < listaHorarioCrear.size(); j++) {//Recorrer la tabla primero por las filas
+                        horariocrear = listaHorarioCrear.get(j);
+                        if (j == fila) {
+                            //horariocrear.setColor("#3B0000");//Poner el color que le corresponde a las materias. 
+                            asignarDatoSemana(horariocrear, columna, horario, "#" + organigrama.getColor(), "#3B0000");
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    public Boolean verificarMateriaInsertada() {
+        String materia = materiasCarreras.getMateria().getNombreCompletoMateria();
+        for (HorarioCrear horariocrear : listaHorarioCrear) {
+            String[] dias = {
+                horariocrear.getLunes(),
+                horariocrear.getMartes(),
+                horariocrear.getMiercoles(),
+                horariocrear.getJueves(),
+                horariocrear.getViernes(),
+                horariocrear.getSabado()
+            };
+
+            for (String dia : dias) {
+                if (materia.equals(dia)) { // usar equals, no ==
+                    addMessage(FacesMessage.SEVERITY_FATAL, "INFO", "MATERIA ENCONTRADA");
+                    return true; // si solo quieres un mensaje por fila
+                }
+            }
+        }
+        return false;
     }
 
     // ********************** Metodos 
@@ -539,6 +1245,26 @@ public class HorarioCrearBean implements Serializable {
 
     }
 
+    public String getSepararAtributos(String valor, int x) {//Sirve para separar MATEMATICAS DISCRETAS A1 #FAS31A
+        if (valor == null || valor.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] partes = valor.split("  "); // o split("\\s+") si quieres separar por cualquier espacio
+        if (partes.length > 0 && x == 0) {
+            return partes[0] + "  " + partes[1];
+        } else if (x == 1) {
+            return partes[2];
+        } else if (x == 2) {
+            return partes[3];
+        } else if (x == 3) {
+            return partes[0];
+        } else {
+            return null;
+
+        }
+    }
+
     public void actualizarCreditos() {
 
         materiasCarreras = materiasCarrerasServicio.buscarPorId(Integer.parseInt(asignaturaS));
@@ -550,13 +1276,25 @@ public class HorarioCrearBean implements Serializable {
     }
 
     public void generarHorario() throws ParseException {
-
+        materiasCarreras = materiasCarrerasServicio.buscarPorId(Integer.parseInt(asignaturaS));
         verificacionDeCampos();//VERIFICA QUE LOS CAMPOS TENGAN ALGO
+        modoSeleccionMateria = false;//¨Por si paso de modo eliminar a modo Insertar Materia.
+
+        if (listaHorariosGenerados != null) {//Verifico que no ya este la materia que voy a insertar en la base de datos. 
+            for (Horarios h : listaHorariosGenerados) {
+                if (materiasCarreras.getMateria().getNombreCompletoMateria().equals(h.getMateria().getNombreCompletoMateria())) {
+                    addMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "MATERIA YA INSERTADA");
+                    return;
+                }
+            }
+
+        }
+
         if (camposllenos) {//COMPRUEBA QUE TODOS LOS CAMPOS TENGAN ALGO Y QUE HAYAN SIDO SELECCIOANDAS AL MENOS UNA CELDA
             generarGrupo();
 
             transformarCoordenadas();// pasa de esto 1,1;1,2;1,3;1,4;1,5 a ["1,1"]["1,2"]["1,3"]["1,4"]["1,5"]
-            materiasCarreras = materiasCarrerasServicio.buscarPorId(Integer.parseInt(asignaturaS));
+
             organigrama = organigramaServicio.buscarPorId(materiasCarreras.getMateria().getClaveArea().getClaveArea());
 
             if (listaHorarios == null) {//VERIFICA TODOS LOS HORARIOS QUE SE HAN LLENADO
@@ -586,11 +1324,9 @@ public class HorarioCrearBean implements Serializable {
                     horario.setTipoPersonal('D');
                     horario.setIdGrupo(grupo);
                     listaHorarios.add(horario);
-                    //listaHorarioscomprobacion = listaHorarios;
                     horarioServicio.insertarHorario(horario);
-                    System.out.println("Celda " + i + ": " + celda);
                 }
-
+                addMessage(FacesMessage.SEVERITY_INFO, "ÉXITO", "SE HAN AGREGADO TODAS LOS HORARIOS A LA BD");
                 //ACOMODAR EN LA TABLA LA INFORMACION 
                 for (int i = 0; i < listaHorarios.size(); i++) {//Obtener el objeto donde tengo la informacion de las materias.
                     horario = listaHorarios.get(i);
@@ -601,9 +1337,9 @@ public class HorarioCrearBean implements Serializable {
 
                     for (int j = 0; j < listaHorarioCrear.size(); j++) {//Recorrer la tabla primero por las filas
                         horariocrear = listaHorarioCrear.get(j);
-                        horariocrear.setColor("#" + organigrama.getColor());//Poner el color que le corresponde a las materias. 
                         if (j == fila) {
-                            asignarDatoSemana(horariocrear, columna, horario);
+                            //horariocrear.setColor("#3B0000");//Poner el color que le corresponde a las materias. 
+                            asignarDatoSemana(horariocrear, columna, horario, "#" + organigrama.getColor(), "#3B0000");
                             break;
                         }
 
@@ -617,10 +1353,9 @@ public class HorarioCrearBean implements Serializable {
                 listaHorarios = null;
                 generarHorario();
             }
+
         }
-        /*FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "ÉXITO", "HORARIO GENERADO CORRECTAMENTE"));
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);*/
+
     }
 
     public void redirectToPage() throws IOException {
@@ -662,6 +1397,24 @@ public class HorarioCrearBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_WARN, "INFO", "TE FALTAN: " + (creditos - pares.length) + " HORAS");
         } else {
             camposllenos = true;
+            addMessage(FacesMessage.SEVERITY_INFO, "INFO", "CAMPOS COMPLETOS");
+        }
+    }
+
+    public void verificacionDeCamposActualizado() {//Verifica que los campos todos tengan algo
+        System.out.println("CarreraS: " + carreraS + " PeriodosS: " + periodoS + " SemestreS: " + semestreS + " AsignaturaS: " + asignaturaS
+                + " Aulas: " + aulas + " Valorgrupo: " + valorgrupo + " Numestudiantes " + numestudiantes);
+        System.out.println("Celdas seleccionadas: " + posicionesSeleccionadas);
+
+        if (carreraS == null || "".equals(carreraS)) {
+            addMessage(FacesMessage.SEVERITY_WARN, "INFO", "CAMPO CARRERAs VACIO");
+        } else if ("0".equals(semestreS)) {
+            addMessage(FacesMessage.SEVERITY_WARN, "INFO", "CAMPO SEMESTRE VACIO");
+        } else if (periodoS == null || "".equals(periodoS)) {
+            addMessage(FacesMessage.SEVERITY_WARN, "INFO", "CAMPO PERIODO VACIO");
+        } else if (valorgrupo == null || "".equals(valorgrupo)) {
+            addMessage(FacesMessage.SEVERITY_WARN, "INFO", "CAMPO NOMBRE GRUPO VACIO");
+        } else {
             addMessage(FacesMessage.SEVERITY_INFO, "INFO", "CAMPOS COMPLETOS");
         }
     }
@@ -709,26 +1462,26 @@ public class HorarioCrearBean implements Serializable {
         return "";
     }
 
-    public void asignarDatoSemana(HorarioCrear x, int y, Horarios z) {
+    public void asignarDatoSemana(HorarioCrear x, int y, Horarios z, String colorFondo, String colorLetra) {
 
         switch (y) {
             case 1:
-                x.setLunes(z.getMateria().getNombreCompletoMateria() + " " + z.getAula().getAula());
+                x.setLunes(z.getMateria().getNombreCompletoMateria() + "  " + z.getAula().getAula() + "  " + colorFondo + "  " + colorLetra);
                 break;
             case 2:
-                x.setMartes(z.getMateria().getNombreCompletoMateria() + " " + z.getAula().getAula());
+                x.setMartes(z.getMateria().getNombreCompletoMateria() + "  " + z.getAula().getAula() + "  " + colorFondo + "  " + colorLetra);
                 break;
             case 3:
-                x.setMiercoles(z.getMateria().getNombreCompletoMateria() + " " + z.getAula().getAula());
+                x.setMiercoles(z.getMateria().getNombreCompletoMateria() + "  " + z.getAula().getAula() + "  " + colorFondo + "  " + colorLetra);
                 break;
             case 4:
-                x.setJueves(z.getMateria().getNombreCompletoMateria() + " " + z.getAula().getAula());
+                x.setJueves(z.getMateria().getNombreCompletoMateria() + "  " + z.getAula().getAula() + "  " + colorFondo + "  " + colorLetra);
                 break;
             case 5:
-                x.setViernes(z.getMateria().getNombreCompletoMateria() + z.getAula().getAula());
+                x.setViernes(z.getMateria().getNombreCompletoMateria() + "  " + z.getAula().getAula() + "  " + colorFondo + "  " + colorLetra);
                 break;
             case 56:
-                x.setSabado(z.getMateria().getNombreCompletoMateria() + z.getAula().getAula());
+                x.setSabado(z.getMateria().getNombreCompletoMateria() + "  " + z.getAula().getAula() + "  " + colorFondo + "  " + colorLetra);
                 break;
             default:
                 System.out.println("Rango inválido");

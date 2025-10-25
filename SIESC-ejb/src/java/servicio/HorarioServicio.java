@@ -55,4 +55,12 @@ public class HorarioServicio implements HorarioServicioLocal {
     public List<Horarios> buscarHorariosPorGrupos(Carrera reticula, int semestre, PeriodoEscolar periodo, String nombregrupo) {
         return horariosFacade.buscarHorariosPorGrupos(reticula, semestre, periodo, nombregrupo);
     }
+    @Override
+    public void eliminar(Horarios horarios) {
+        horariosFacade.remove(horarios);
+    }
+    @Override
+    public void actualizar(Horarios horarios) {
+        horariosFacade.edit(horarios);
+    }
 }

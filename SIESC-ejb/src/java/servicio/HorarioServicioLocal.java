@@ -30,4 +30,6 @@ public interface HorarioServicioLocal {
     void insertarHorario(Horarios horarios);
 
     List<Horarios> buscarHorariosPorGrupos(Carrera reticula, int semestre, PeriodoEscolar periodo, String nombregrupo);
+    void eliminar(Horarios horarios);
+    void actualizar(Horarios horarios);
 }

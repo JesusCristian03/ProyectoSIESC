@@ -42,4 +42,5 @@ public class CarreraFacade extends AbstractFacade<Carrera> implements CarreraFac
         return lista;
     }
     
+    
 }

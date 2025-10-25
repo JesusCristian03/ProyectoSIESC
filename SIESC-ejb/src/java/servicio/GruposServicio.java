@@ -33,6 +33,10 @@ public class GruposServicio implements GruposServicioLocal {
     public void insertarNuevoGrupo(Grupos grupo) {
         gruposFacade.create(grupo);
     }
+    @Override
+    public void eliminar(Grupos grupo) {
+        gruposFacade.remove(grupo);
+    }
 
     @Override
     public Grupos buscarPorId(String x) {

@@ -22,4 +22,5 @@ public interface GruposServicioLocal {
     Grupos buscarPorId(String x);
     public List<Grupos> buscarGrupoSii(Integer reticula, Integer idmateriacarrera, String periodo, String grupo);
     List<Grupos> buscarGruposPorCampoNombre(Carrera reticula, Integer semestre, PeriodoEscolar periodo, String grupo);
+    void eliminar(Grupos grupo);
 }
